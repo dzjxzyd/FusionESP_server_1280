@@ -1,0 +1,10 @@
+Flask
+pandas
+numpy
+fair-esm
+scikit-learn
+torch==1.12.0+cpu
+gunicorn
+werkzeug~=2.2.2
+openpyxl
+rdkit

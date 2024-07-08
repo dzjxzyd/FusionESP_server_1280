@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+      <head>
+        <meta charset="utf-8">
+        <title>CLR_ESP</title>
+        <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family==Rancho&effect=shadow-multiple' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+		<style>
+			.content {
+			  max-width: 1000px;
+			  margin: auto;
+			}
+
+			</style>
+    </head>
+
+<body>
+    <div class="content">
+        <h1>CLR_ESP: A general model to predict small molecule substrates of enzymes through fusing protein and chemistry language model by contrastive learning </h1>
+        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes are available at https://github.com/dzjxzyd/CLR_ESP</p>
+	<p style="font-size:80%">Notice: consine similarity can give you how confidence the model think its output. </p>
+        <form action="{{url_for('predict')}}" method="post">
+            <input type="text" name="Enzyme_sequence" placeholder="enzyme seuqence" required="required" />
+            <input type="text" name="molecule_SMILES" placeholder="SMILES format" required="required" />
+            <button type="submit" class="btn btn-primary btn-block btn-large">Run</button>
+        </form>
+        <p style="color:cyan"> {{ prediction_text }} </p>
+
+        <br/>
+        <br/>
+        <p style="font-size:80%">Large-scale output version: 1. Prepare your files (xls, xlsx, fasta, or txt) and click “Choose File” for uploading → 2. Choose a model for classification  → 3. Download the results. </p>
+        <form action="{{url_for('pred_with_file')}}" method="post" enctype = "multipart/form-data">
+        <br>
+            <label for="Peptide_sequences">Choose a file to upload</label>
+            <input type="file" name="Peptide_sequences" id="Peptide_sequences" accept=".xls,.xlsx"/>
+            <button type="submit" class="btn btn-primary btn-block btn-large">Run</button>
+        </form>
+        <h4>Usage of the webserver:</h4>
+        <p style="font-size:80%"> Example for “Quick output version” : </p>
+        <p style="font-size:70%">1. Select Logistic_Regression model for antihypertensive activity prediction.   →   →  →  2. Insert a peptide or protein sequence, “VPP” →   →  →  3. Click “Run”→   →  → 4. The result will be returned in seconds below the “Run” button</p>
+        <p style="font-size:70%">Notice: it also support multiple sequence at the same time. Just input as “VPP,IPP,CCL,AGR” (sequences are separated by comma, no space)</p>
+        <p style="font-size:80%"> Example for “Large-scale output version:” : </p>
+        <p style="font-size:70%">1. Prepare your xls, xlsx, txt or fasta files  →  →  → 2. Upload the file through “Choose File” botton  →   →  → 3. Click “Run” →   →  → 4. It will automatically download your results. </p>
+        <p style="font-size:70%">Notice: File preparation should follow the examples under this repository https://github.com/dzjxzyd/pLM4ACE/tree/main/Example%20uploading%20files </p>
+        <h4>Model performance in test dataset</h4>
+        <table style="width:100%">
+          <tr>
+            <th style="text-align: center; vertical-align: middle;">Model</th>
+            <th style="text-align: center; vertical-align: middle;">Balanced ACC</th>
+            <th style="text-align: center; vertical-align: middle;">Sensitivity</th>
+            <th style="text-align: center; vertical-align: middle;">Specificity</th>
+            <th style="text-align: center; vertical-align: middle;" >Matthews correlation coefficient </th>
+          </tr>
+          <tr>
+            <td style="text-align: center; vertical-align: middle;" >Logistic regression</td>
+            <td style="text-align: center; vertical-align: middle;">0.883 ± 0.017</td>
+            <td style="text-align: center; vertical-align: middle;" >0.845 ± 0.041</td>
+            <td style="text-align: center; vertical-align: middle;">0.92 ± 0.025</td>
+            <td style="text-align: center; vertical-align: middle;">0.77 ± 0.032</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; vertical-align: middle;">SVM</td>
+            <td style="text-align: center; vertical-align: middle;">0.867 ± 0.02</td>
+            <td style="text-align: center; vertical-align: middle;">0.825 ± 0.041</td>
+            <td style="text-align: center; vertical-align: middle;">0.91 ± 0.027</td>
+            <td style="text-align: center; vertical-align: middle;">0.74 ± 0.038</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; vertical-align: middle;">Multilayer perceptron</td>
+            <td style="text-align: center; vertical-align: middle;">0.855 ± 0.024</td>
+            <td style="text-align: center; vertical-align: middle;">0.815 ± 0.036</td>
+            <td style="text-align: center; vertical-align: middle;">0.895 ± 0.037</td>
+            <td style="text-align: center; vertical-align: middle;">0.711 ± 0.054</td>
+          </tr>
+        </table>
+        <img src="static/css/Whole architecture.png" alt="Whole architecture" width="1000" height="400" style="float:left">
+    </div>
+</body>
+</html>
