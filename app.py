@@ -230,8 +230,7 @@ def pred_with_file():
 
     # model_name = model_selection(features.get("Model_selection"))
     # model=pickle.load(open(model_name,'rb'))
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
-    
+        
     file = request.files["Peptide_sequences"]
     filename = secure_filename(file.filename)
     filetype = get_filetype(filename)
@@ -267,6 +266,7 @@ def pred_with_file():
             embeddings_results_smiles.append(one_seq_embeddings)
    
     # prediction
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
     refined_enzy_embed, refined_smiles_embed = model(embeddings_results_enzy_torch,embeddings_results_smiles_torch)
