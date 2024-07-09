@@ -60,8 +60,6 @@ def esm_embeddings_1280(esm2, esm2_alphabet, peptide_sequence_list):
 # model_ESM, alphabet = esm.pretrained.esm2_t36_3B_UR50D() # 36 layer
 model_ESM, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
 
-
-
 def get_filetype(filename):
     return filename.rsplit('.', 1)[1].lower()
 
@@ -137,7 +135,7 @@ def pred_with_file():
     file.save(save_location)
 
     sequence_list = []
-    df = pandas.read_excel(save_location, header=0)
+    df = pd.read_excel(save_location, header=0)
     sequence_list = df["Protein sequence"].tolist()
 
     if len(sequence_list) == 0:
