@@ -100,33 +100,33 @@ class Contrastive_learning_layer(nn.Module):
         return refined_enzy_embed, refined_smiles_embed
 
 
-# collect the output
-def assign_activity(predicted_class):
-    import collections
-    out_put = []
-    for i in range(len(predicted_class)):
-        if predicted_class[i] == 0:
-            # out_put[int_features[i]].append(1)
-            out_put.append('Yes')
-        else:
-            # out_put[int_features[i]].append(2)
-            out_put.append('No')
-    return out_put
+# # collect the output
+# def assign_activity(predicted_class):
+#     import collections
+#     out_put = []
+#     for i in range(len(predicted_class)):
+#         if predicted_class[i] == 0:
+#             # out_put[int_features[i]].append(1)
+#             out_put.append('Yes')
+#         else:
+#             # out_put[int_features[i]].append(2)
+#             out_put.append('No')
+#     return out_put
 
 
 def get_filetype(filename):
     return filename.rsplit('.', 1)[1].lower()
 
 
-def model_selection(num: str):
-    model = ''
-    if num == '1':
-        model = 'LR.pkl'
-    elif num == '2':
-        model = 'SVM.pkl'
-    elif num == '3':
-        model = 'MLP.pkl'
-    return model
+# def model_selection(num: str):
+#     model = ''
+#     if num == '1':
+#         model = 'LR.pkl'
+#     elif num == '2':
+#         model = 'SVM.pkl'
+#     elif num == '3':
+#         model = 'MLP.pkl'
+#     return model
 
 
 # def text_fasta_reading(file_name):
@@ -176,7 +176,7 @@ def predict():
     #     return render_template('index.html')
     # model_name = model_selection(int_features[0])
     # model=pickle.load(open(model_name,'rb'))
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
+    
 
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
     # 另外需要注意，这个地方，网页上输入的时候必须要是AAA,CCC,SAS, 这个格式，不同的sequence的区分只能使用逗号，其他的都不可以
@@ -195,6 +195,7 @@ def predict():
     embeddings_results_smiles.append(one_seq_embeddings)
     
     # prediction
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
     refined_enzy_embed, refined_smiles_embed = model(embeddings_results_enzy_torch,embeddings_results_smiles_torch)
