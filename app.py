@@ -72,40 +72,7 @@ def get_filetype(filename):
 
 import torch.nn as nn
 import torch
-class Contrastive_learning_layer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
-        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
-        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
-        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
 
-        self.relu = nn.ReLU()
-        self.batch_norm_enzy = nn.BatchNorm1d(1280)
-        self.batch_norm_smiles = nn.BatchNorm1d(768)
-        self.batch_norm_shared = nn.BatchNorm1d(128)
-
-    def forward(self, enzy_embed, smiles_embed):
-        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
-
-        refined_enzy_embed = self.relu(refined_enzy_embed)
-        refined_smiles_embed = self.relu(refined_smiles_embed)
-
-        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
-        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
-        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
-
-        return refined_enzy_embed, refined_smiles_embed
-model = Contrastive_learning_layer().to('cpu')
-model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 
 # create an app object using the Flask class
 @app.route('/')
@@ -118,8 +85,40 @@ def predict():
     int_features = [str(x) for x in request.form.values()]
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
-
-  
+    class Contrastive_learning_layer(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
+            self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
+            self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
+            self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
+    
+            self.relu = nn.ReLU()
+            self.batch_norm_enzy = nn.BatchNorm1d(1280)
+            self.batch_norm_smiles = nn.BatchNorm1d(768)
+            self.batch_norm_shared = nn.BatchNorm1d(128)
+    
+        def forward(self, enzy_embed, smiles_embed):
+            refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
+            refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
+    
+            refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
+            refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
+    
+            refined_enzy_embed = self.relu(refined_enzy_embed)
+            refined_smiles_embed = self.relu(refined_smiles_embed)
+    
+            refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
+            refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
+    
+            refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
+            refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
+            refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
+            refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
+    
+            return refined_enzy_embed, refined_smiles_embed
+    model = Contrastive_learning_layer().to('cpu')
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
     # 另外需要注意，这个地方，网页上输入的时候必须要是AAA,CCC,SAS, 这个格式，不同的sequence的区分只能使用逗号，其他的都不可以
@@ -201,7 +200,40 @@ def pred_with_file():
             # employ ESM model for converting and save the converted data in csv format
             one_seq_embeddings = MolFormer_embedding(model_smiles, tokenizer, smiles_list)
             embeddings_results_smiles.append(one_seq_embeddings)
-   
+    class Contrastive_learning_layer(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
+                self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
+                self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
+                self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
+        
+                self.relu = nn.ReLU()
+                self.batch_norm_enzy = nn.BatchNorm1d(1280)
+                self.batch_norm_smiles = nn.BatchNorm1d(768)
+                self.batch_norm_shared = nn.BatchNorm1d(128)
+        
+            def forward(self, enzy_embed, smiles_embed):
+                refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
+                refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
+        
+                refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
+                refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
+        
+                refined_enzy_embed = self.relu(refined_enzy_embed)
+                refined_smiles_embed = self.relu(refined_smiles_embed)
+        
+                refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
+                refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
+        
+                refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
+                refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
+                refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
+                refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
+        
+                return refined_enzy_embed, refined_smiles_embed
+    model = Contrastive_learning_layer().to('cpu')
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     # prediction
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
