@@ -15,7 +15,7 @@ some online available errors like:
 
 etc.
 
-I would highly recommend this repository and I refer to this [link](https://stackoverflow.com/questions/74229936/getting-cant-get-attribute-getimages-on-module-main-from-usr-local-b) (REALLY APPRECIATED)
+I would highly recommend this repository and I refer to this [link](https://stackoverflow.com/questions/74229936/getting-cant-get-attribute-getimages-on-module-main-from-usr-local-b) (REALLY APPRECIATED !!!)
 
 the solution is to add a few line beforet the app.run line 
 
