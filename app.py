@@ -3,7 +3,7 @@ import numpy as np
 from flask import Flask, request, url_for, redirect, render_template, send_from_directory
 import pandas as pd
 from werkzeug.utils import secure_filename
-from model import Contrastive_learning_layer
+from model_function import Contrastive_learning_layer
 import torch
 import torch.nn as nn
 import esm
