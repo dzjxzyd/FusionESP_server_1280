@@ -1,9 +1,10 @@
+-f https://download.pytorch.org/whl/torch_stable.html
 Flask
 pandas
 numpy
 fair-esm
 scikit-learn
-torch --index-url https://download.pytorch.org/whl/cpu
+torch==1.12.0+cpu
 gunicorn
 werkzeug
 openpyxl
