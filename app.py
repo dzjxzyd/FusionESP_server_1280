@@ -17,7 +17,14 @@ import torch
 from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
 
-app = Flask(__name__)
+# app = Flask(__name__)
+def create_app():
+        from model import Contrastive_learning_layer
+        #Init App
+        app = Flask(__name__)
+        # Markdown(app)
+    return app
+app = create_app()
 
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
