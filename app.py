@@ -16,7 +16,7 @@ import gc
 import torch
 from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
-from model import Contrastive_learning_layer
+
 app = Flask(__name__)
 
 
