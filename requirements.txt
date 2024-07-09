@@ -1,13 +1,14 @@
 
-Flask
-pandas
-numpy
-fair-esm
-scikit-learn
-torch --index-url https://download.pytorch.org/whl/cpu
-gunicorn
-werkzeug
-openpyxl
-urllib3
+-f https://download.pytorch.org/whl/torch_stable.html
+Flask==2.2.2
+pandas==1.3.5
+numpy==1.21.6
+fair-esm==2.0.0
+scikit-learn===1.0.2
+torch==1.12.0+cpu
+gunicorn==20.1.0
+werkzeug==2.2.2
+openpyxl==3.0.9
+urllib3==1.26.6
 transformers[torch]
 rdkit
