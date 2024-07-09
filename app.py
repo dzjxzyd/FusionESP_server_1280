@@ -18,13 +18,8 @@ from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
 
 app = Flask(__name__)
-# def create_app():
-#         from model import Contrastive_learning_layer
-#         #Init App
-#         app = Flask(__name__)
-#         # Markdown(app)
-#     return app
-# app = create_app()
+from model import Contrastive_learning_layer
+model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
@@ -87,8 +82,6 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    from model import Contrastive_learning_layer
-
     int_features = [str(x) for x in request.form.values()]
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
@@ -128,7 +121,6 @@ def predict():
 
 @app.route('/pred_with_file', methods=['POST'])
 def pred_with_file():
-    from model import Contrastive_learning_layer
     # delete existing files that are in the 'input' folder
     dir = 'input'
     for f in os.listdir(os.path.join(os.getcwd(), dir)):
@@ -178,7 +170,6 @@ def pred_with_file():
             embeddings_results_smiles.append(one_seq_embeddings)
    
     # prediction
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
     refined_enzy_embed, refined_smiles_embed = model(embeddings_results_enzy_torch,embeddings_results_smiles_torch)
@@ -209,5 +200,4 @@ def pred_with_file():
 
 
 if __name__ == '__main__':
-    from model import Contrastive_learning_layer
     app.run()
