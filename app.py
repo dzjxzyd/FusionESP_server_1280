@@ -1,19 +1,14 @@
 import os
 import numpy as np
-import pandas
-import pickle
 from flask import Flask, request, url_for, redirect, render_template, send_from_directory
 import pandas as pd
 from werkzeug.utils import secure_filename
-
+from model import Contrastive_learning_layer
 import torch
 import torch.nn as nn
-import torch
 import esm
 import collections
-import pandas as pd
 import gc
-import torch
 from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
 
