@@ -104,7 +104,7 @@ class Contrastive_learning_layer(nn.Module):
         refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
 
         return refined_enzy_embed, refined_smiles_embed
-
+model = Contrastive_learning_layer().to('cpu')
 model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 
 # create an app object using the Flask class
