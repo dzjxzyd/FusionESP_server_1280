@@ -182,7 +182,7 @@ def pred_with_file():
             Confidence_score.append(1-i)
             
     report = {"Protein sequence": df['Protein sequence'].tolist(), "SMILES": df['SMILES'].tolist(), "interaction": interaction_result,"confidence_score":Confidence_score }
-    report_df = pandas.DataFrame(report)
+    report_df = pd.DataFrame(report)
     save_result_path = os.path.join('input', "report.xlsx")
     report_df.to_excel(save_result_path)
     send_from_directory("input", "report.xlsx")
