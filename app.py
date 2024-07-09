@@ -298,4 +298,5 @@ def pred_with_file():
 
 
 if __name__ == '__main__':
+    from model import Contrastive_learning_layer
     app.run()
