@@ -78,9 +78,6 @@ def predict():
     int_features = [str(x) for x in request.form.values()]
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
-
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
-
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
     # 另外需要注意，这个地方，网页上输入的时候必须要是AAA,CCC,SAS, 这个格式，不同的sequence的区分只能使用逗号，其他的都不可以
     embeddings_results_enzy = []
