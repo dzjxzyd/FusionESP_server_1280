@@ -18,9 +18,6 @@ from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
 
 app = Flask(__name__)
-from model import Contrastive_learning_layer
-model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
-
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
 
@@ -73,6 +70,8 @@ model_ESM, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
 def get_filetype(filename):
     return filename.rsplit('.', 1)[1].lower()
 
+from model import Contrastive_learning_layer
+model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 
 # create an app object using the Flask class
 @app.route('/')
