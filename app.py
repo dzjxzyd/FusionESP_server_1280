@@ -19,7 +19,6 @@ from rdkit import Chem
 
 app = Flask(__name__)
 
-
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
 
@@ -66,95 +65,11 @@ def esm_embeddings_1280(esm2, esm2_alphabet, peptide_sequence_list):
 
 # model_ESM, alphabet = esm.pretrained.esm2_t36_3B_UR50D() # 36 layer
 model_ESM, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
-class Contrastive_learning_layer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
-        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
-        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
-        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
 
-        self.relu = nn.ReLU()
-        self.batch_norm_enzy = nn.BatchNorm1d(1280)
-        self.batch_norm_smiles = nn.BatchNorm1d(768)
-        self.batch_norm_shared = nn.BatchNorm1d(128)
-
-    def forward(self, enzy_embed, smiles_embed):
-        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
-
-        refined_enzy_embed = self.relu(refined_enzy_embed)
-        refined_smiles_embed = self.relu(refined_smiles_embed)
-
-        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
-        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
-        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
-
-        return refined_enzy_embed, refined_smiles_embed
-
-
-# # collect the output
-# def assign_activity(predicted_class):
-#     import collections
-#     out_put = []
-#     for i in range(len(predicted_class)):
-#         if predicted_class[i] == 0:
-#             # out_put[int_features[i]].append(1)
-#             out_put.append('Yes')
-#         else:
-#             # out_put[int_features[i]].append(2)
-#             out_put.append('No')
-#     return out_put
 
 
 def get_filetype(filename):
     return filename.rsplit('.', 1)[1].lower()
-
-
-# def model_selection(num: str):
-#     model = ''
-#     if num == '1':
-#         model = 'LR.pkl'
-#     elif num == '2':
-#         model = 'SVM.pkl'
-#     elif num == '3':
-#         model = 'MLP.pkl'
-#     return model
-
-
-# def text_fasta_reading(file_name):
-#     """
-#     A function for reading txt and fasta files
-#     """
-#     import collections
-#     # read txt file with sequence inside
-#     file_read = open(file_name, mode='r')
-#     file_content = []  # create a list for the fasta content temporaty storage
-#     for line in file_read:
-#         file_content.append(line.strip())  # extract all the information in the file and delete the /n in the file
-
-#     # build a list to collect all the sequence information
-#     sequence_name_collect = collections.defaultdict(list)
-#     for i in range(len(file_content)):
-#         if '>' in file_content[i]:  # check the symbol of the
-#             a = i+1
-#             seq_template = str()
-#             while a <len(file_content) and '>' not in file_content[a] and len(file_content[a])!= 0 :
-#                 seq_template = seq_template + file_content[a]
-#                 a=a+1
-#             sequence_name_collect[file_content[i]].append(seq_template)
-
-#     # transformed into the same style as the xlsx file loaded with pd.read_excel and sequence_list = dataset['sequence']
-#     sequence_name_collect = pd.DataFrame(sequence_name_collect).T
-#     sequence_list = sequence_name_collect[0]
-#     return sequence_list
 
 
 # create an app object using the Flask class
@@ -165,18 +80,13 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # 每一个网页上的 输入的框，是一个单独的x，下面这个就是吧这个单独的信息变成一个list，每一个单独的就是一个str （也可以吧x变成int 如果想要的话）
-    # int_features  = [str(x) for x in request.form.values()] # this command basically use extract all the input into a list
-    # final_features = [np.array(int_features)]
+    from model import Contrastive_learning_layer
+
     int_features = [str(x) for x in request.form.values()]
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
 
-    # if int(int_features[0]) < 1 or int(int_features[0]) > 12:
-    #     return render_template('index.html')
-    # model_name = model_selection(int_features[0])
-    # model=pickle.load(open(model_name,'rb'))
-    
+  
 
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
     # 另外需要注意，这个地方，网页上输入的时候必须要是AAA,CCC,SAS, 这个格式，不同的sequence的区分只能使用逗号，其他的都不可以
@@ -200,24 +110,18 @@ def predict():
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
     refined_enzy_embed, refined_smiles_embed = model(embeddings_results_enzy_torch,embeddings_results_smiles_torch)
     cosine_sim = torch.nn.functional.cosine_similarity(refined_enzy_embed, refined_smiles_embed, dim=1).detach().cpu().numpy()
-    # prediction
-    # predicted_class = model.predict(embeddings_results)
+
     if cosine_sim > 0.5:
         final_output = 'interaction' + '; confidence score is ' + str(cosine_sim)
     else:
         final_output ='non-interaction' + '; confidence score is ' + str(1- cosine_sim)
-    # predicted_class = assign_activity(predicted_class)  # transform results (0 and 1) into 'active' and 'non-active'
-    # final_output = []
-    # for i in range(len(sequence_list)):
-    #     temp_output=sequence_list[i]+': '+predicted_class[i]+';'
-    #     final_output.append(temp_output)
-
     return render_template('index.html',
                            prediction_text="Prediction results of input sequences {}".format(final_output))
 
 
 @app.route('/pred_with_file', methods=['POST'])
 def pred_with_file():
+    from model import Contrastive_learning_layer
     # delete existing files that are in the 'input' folder
     dir = 'input'
     for f in os.listdir(os.path.join(os.getcwd(), dir)):
