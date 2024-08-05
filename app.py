@@ -260,7 +260,7 @@ class Contrastive_learning_layer(nn.Module):
 
         return refined_enzy_embed, refined_smiles_embed
 
-__main__.Contrastive_learning_layer = Contrastive_learning_layer
+__main__.Contrastive_learning_layer = Contrastive_learning_layer()
 
 if __name__ == '__main__':
     
