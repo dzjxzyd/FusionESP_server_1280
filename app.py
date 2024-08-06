@@ -15,7 +15,41 @@ from rdkit import Chem
 app = Flask(__name__)
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
+class Contrastive_learning_layer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
+        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
+        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
+        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
 
+        self.relu = nn.ReLU()
+        self.batch_norm_enzy = nn.BatchNorm1d(1280)
+        self.batch_norm_smiles = nn.BatchNorm1d(768)
+        self.batch_norm_shared = nn.BatchNorm1d(128)
+
+    def forward(self, enzy_embed, smiles_embed):
+        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
+        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
+
+        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
+        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
+
+        refined_enzy_embed = self.relu(refined_enzy_embed)
+        refined_smiles_embed = self.relu(refined_smiles_embed)
+
+        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
+        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
+
+        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
+        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
+        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
+        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
+
+        return refined_enzy_embed, refined_smiles_embed
+model = Contrastive_learning_layer()
+
+model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 def MolFormer_embedding(model_smiles, tokenizer, SMILES_list):
     inputs = tokenizer(SMILES_list, padding=True, return_tensors="pt")
     with torch.no_grad():
@@ -190,38 +224,6 @@ def pred_with_file():
     send_from_directory("input", "report.xlsx")
 
     return send_from_directory("input", "report.xlsx")
-class Contrastive_learning_layer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
-        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
-        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
-        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
-
-        self.relu = nn.ReLU()
-        self.batch_norm_enzy = nn.BatchNorm1d(1280)
-        self.batch_norm_smiles = nn.BatchNorm1d(768)
-        self.batch_norm_shared = nn.BatchNorm1d(128)
-
-    def forward(self, enzy_embed, smiles_embed):
-        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
-
-        refined_enzy_embed = self.relu(refined_enzy_embed)
-        refined_smiles_embed = self.relu(refined_smiles_embed)
-
-        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
-        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
-        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
-
-        return refined_enzy_embed, refined_smiles_embed
 
 import torch.nn as nn
 import torch
@@ -229,9 +231,7 @@ import __main__
 
 
 __main__.Contrastive_learning_layer = Contrastive_learning_layer()
-model = Contrastive_learning_layer()
 
-model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 if __name__ == '__main__':
     
     app.run()
