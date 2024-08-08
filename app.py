@@ -76,7 +76,6 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     int_features = [str(x) for x in request.form.values()]
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
@@ -96,7 +95,7 @@ def predict():
     embeddings_results_smiles.append(one_seq_embeddings)
     
     # prediction
-    
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
     refined_enzy_embed, refined_smiles_embed = model(embeddings_results_enzy_torch,embeddings_results_smiles_torch)
@@ -113,7 +112,6 @@ def predict():
 @app.route('/pred_with_file', methods=['POST'])
 def pred_with_file():
     # delete existing files that are in the 'input' folder
-    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     dir = 'input'
     for f in os.listdir(os.path.join(os.getcwd(), dir)):
         os.remove(os.path.join(dir, f))
@@ -161,7 +159,7 @@ def pred_with_file():
             one_seq_embeddings = MolFormer_embedding(model_smiles, tokenizer, smiles_list)
             embeddings_results_smiles.append(one_seq_embeddings)
    
-    
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     # prediction
     embeddings_results_enzy_torch = torch.cat(embeddings_results_enzy, dim=0)
     embeddings_results_smiles_torch = torch.cat(embeddings_results_smiles, dim=0)
@@ -194,7 +192,6 @@ def pred_with_file():
 import torch.nn as nn
 import torch
 import __main__
-
 class Contrastive_learning_layer(nn.Module):
     def __init__(self):
         super().__init__()
@@ -228,8 +225,7 @@ class Contrastive_learning_layer(nn.Module):
 
         return refined_enzy_embed, refined_smiles_embed
 
-__main__.Contrastive_learning_layer = Contrastive_learning_layer()
-
+__main__.Contrastive_learning_layer = Contrastive_learning_layer
 if __name__ == '__main__':
     
     app.run()
