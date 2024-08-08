@@ -15,41 +15,7 @@ from rdkit import Chem
 app = Flask(__name__)
 model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
-class Contrastive_learning_layer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
-        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
-        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
-        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
 
-        self.relu = nn.ReLU()
-        self.batch_norm_enzy = nn.BatchNorm1d(1280)
-        self.batch_norm_smiles = nn.BatchNorm1d(768)
-        self.batch_norm_shared = nn.BatchNorm1d(128)
-
-    def forward(self, enzy_embed, smiles_embed):
-        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
-
-        refined_enzy_embed = self.relu(refined_enzy_embed)
-        refined_smiles_embed = self.relu(refined_smiles_embed)
-
-        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
-        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
-
-        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
-        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
-        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
-        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
-
-        return refined_enzy_embed, refined_smiles_embed
-model = Contrastive_learning_layer()
-
-model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
 def MolFormer_embedding(model_smiles, tokenizer, SMILES_list):
     inputs = tokenizer(SMILES_list, padding=True, return_tensors="pt")
     with torch.no_grad():
@@ -105,13 +71,12 @@ import torch
 @app.route('/')
 def home():
     return render_template('index.html')
-import torch.nn as nn
-import torch
 
 
 @app.route('/predict', methods=['POST'])
 def predict():
     int_features = [str(x) for x in request.form.values()]
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     print(int_features)
     # we have two input in the website, one is the model type and other is the peptide sequences
     seq = int_features[0]  # 因为这个list里又两个element我们需要第二个，所以我只需要把吧这个拿出来，然后split
@@ -148,6 +113,7 @@ def predict():
 @app.route('/pred_with_file', methods=['POST'])
 def pred_with_file():
     # delete existing files that are in the 'input' folder
+    model = torch.load('best_model_esm2_1280_fine_tuned.pt',map_location=torch.device('cpu'))
     dir = 'input'
     for f in os.listdir(os.path.join(os.getcwd(), dir)):
         os.remove(os.path.join(dir, f))
@@ -229,6 +195,38 @@ import torch.nn as nn
 import torch
 import __main__
 
+class Contrastive_learning_layer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.enzy_refine_layer_1 = nn.Linear(1280, 1280) # W1 and b
+        self.smiles_refine_layer_1 = nn.Linear(768, 768) # W1 and b
+        self.enzy_refine_layer_2 = nn.Linear(1280, 128) # W1 and b
+        self.smiles_refine_layer_2 = nn.Linear(768, 128) # W1 and b
+
+        self.relu = nn.ReLU()
+        self.batch_norm_enzy = nn.BatchNorm1d(1280)
+        self.batch_norm_smiles = nn.BatchNorm1d(768)
+        self.batch_norm_shared = nn.BatchNorm1d(128)
+
+    def forward(self, enzy_embed, smiles_embed):
+        refined_enzy_embed = self.enzy_refine_layer_1(enzy_embed)
+        refined_smiles_embed = self.smiles_refine_layer_1(smiles_embed)
+
+        refined_enzy_embed = self.batch_norm_enzy(refined_enzy_embed)
+        refined_smiles_embed = self.batch_norm_smiles(refined_smiles_embed)
+
+        refined_enzy_embed = self.relu(refined_enzy_embed)
+        refined_smiles_embed = self.relu(refined_smiles_embed)
+
+        refined_enzy_embed = self.enzy_refine_layer_2(refined_enzy_embed)
+        refined_smiles_embed = self.smiles_refine_layer_2(refined_smiles_embed)
+
+        refined_enzy_embed = self.batch_norm_shared(refined_enzy_embed)
+        refined_smiles_embed = self.batch_norm_shared(refined_smiles_embed)
+        refined_enzy_embed = torch.nn.functional.normalize(refined_enzy_embed, dim=1)
+        refined_smiles_embed = torch.nn.functional.normalize(refined_smiles_embed, dim=1)
+
+        return refined_enzy_embed, refined_smiles_embed
 
 __main__.Contrastive_learning_layer = Contrastive_learning_layer()
 
