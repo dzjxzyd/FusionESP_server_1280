@@ -22,8 +22,8 @@
 <body>
     <div class="content">
         <h1>CLR_ESP: A general model to predict small molecule substrates of enzymes through fusing protein and chemistry language model by contrastive learning </h1>
-        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes are available at https://github.com/dzjxzyd/CLR_ESP</p>
-	<p style="font-size:80%">Notice: consine similarity can give you how confidence the model think its output. </p>
+        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes for the model development are available at https://github.com/dzjxzyd/CLR_ESP</p>
+	<p style="font-size:80%">Notice: a confidence score will be given for you, which reflect how confidence the model think its output. The model deployed in this web server is the  CLR_ESP-XL with ESM-2-1280 and MolFormer trained on both phylogenetic evidence-based and experimental evidence-based datasets (ACC = 94.56%	AUC = 0.9635	MCC = 0.8572)</p>
         <form action="{{url_for('predict')}}" method="post">
             <input type="text" name="Enzyme_sequence" placeholder="enzyme seuqence" required="required" />
             <input type="text" name="molecule_SMILES" placeholder="SMILES format" required="required" />
@@ -33,7 +33,7 @@
 
         <br/>
         <br/>
-        <p style="font-size:80%">Large-scale output version: 1. Prepare your files (xls, xlsx, fasta, or txt) and click “Choose File” for uploading → 2. Choose a model for classification  → 3. Download the results. </p>
+        <p style="font-size:80%">Large-scale output version: 1. Prepare your files (xls, xlsx) and click “Choose File” for uploading → 2. Choose a model for classification  → 3. Download the results. </p>
         <form action="{{url_for('pred_with_file')}}" method="post" enctype = "multipart/form-data">
         <br>
             <label for="Peptide_sequences">Choose a file to upload</label>
@@ -42,11 +42,11 @@
         </form>
         <h4>Usage of the webserver:</h4>
         <p style="font-size:80%"> Example for “Quick output version” : </p>
-        <p style="font-size:70%">1. Select Logistic_Regression model for antihypertensive activity prediction.   →   →  →  2. Insert a peptide or protein sequence, “VPP” →   →  →  3. Click “Run”→   →  → 4. The result will be returned in seconds below the “Run” button</p>
+        <p style="font-size:70%">1. Insert a enzyme protein sequence (in single amino acid code), and a SMILES representation of molecules (canonical SMILES) →   →  →  2. Click “Run”→   →  → 4. The result will be returned in seconds below the “Run” button</p>
         <p style="font-size:70%">Notice: it also support multiple sequence at the same time. Just input as “VPP,IPP,CCL,AGR” (sequences are separated by comma, no space)</p>
         <p style="font-size:80%"> Example for “Large-scale output version:” : </p>
         <p style="font-size:70%">1. Prepare your xls, xlsx, txt or fasta files  →  →  → 2. Upload the file through “Choose File” botton  →   →  → 3. Click “Run” →   →  → 4. It will automatically download your results. </p>
-        <p style="font-size:70%">Notice: File preparation should follow the examples under this repository https://github.com/dzjxzyd/pLM4ACE/tree/main/Example%20uploading%20files </p>
+        <p style="font-size:70%">Notice: File preparation should follow the examples under this repository https://github.com/dzjxzyd/CLR_ESP_server_1280/tree/main/input </p>
 
         <img src="static/css/Whole architecture.jpg" alt="Whole architecture" width="640" height="380" style="float:left">
     </div>
