@@ -21,7 +21,7 @@
 
 <body>
     <div class="content">
-        <h1>CLR_ESP: A general model to predict small molecule substrates of enzymes through fusing protein and chemistry language model by contrastive learning </h1>
+        <h1>CLR_ESP: Improved enzyme-substrate pair prediction using contrastive learning</h1>
         <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes for the model development are available at https://github.com/dzjxzyd/CLR_ESP</p>
 	<p style="font-size:80%">Notice: a confidence score will be given for you, which reflect how confidence the model think its output. The model deployed in this web server is the  CLR_ESP-XL with ESM-2-1280 and MolFormer trained on both phylogenetic evidence-based and experimental evidence-based datasets (ACC = 94.56%	AUC = 0.9635	MCC = 0.8572)</p>
         <form action="{{url_for('predict')}}" method="post">
