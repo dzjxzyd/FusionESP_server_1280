@@ -22,8 +22,8 @@
 <body>
     <div class="content">
         <h1>FusionESP: Improved enzyme-substrate pair prediction by fusing protein and chemical knowledge</h1>
-        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes for the model development are available at https://github.com/dzjxzyd/FusionESP</p>
-	<p style="font-size:80%">Notice: a confidence score will be given for you, which reflect how confidence the model think its output. The model deployed in this web server is the  CLR_ESP-XL with ESM-2-1280 and MolFormer trained on both phylogenetic evidence-based and experimental evidence-based datasets (ACC = 94.56%	AUC = 0.9635	MCC = 0.8572)</p>
+        <p style="font-size:70%">The webserver is the implementation of the paper "FusionESP: Improved enzyme-substrate pair prediction by fusing protein and chemical knowledge". The original codes for the model development are available at https://github.com/dzjxzyd/FusionESP</p>
+	<p style="font-size:80%">Notice: a confidence score will be given for you, which reflect how confidence the model think its output. The model deployed in this web server is the  FusionESP-XL with ESM-2-1280 and MolFormer trained on both phylogenetic evidence-based and experimental evidence-based datasets (ACC = 94.56%	AUC = 0.9635	MCC = 0.8572)</p>
         <form action="{{url_for('predict')}}" method="post">
             <input type="text" name="Enzyme_sequence" placeholder="enzyme seuqence" required="required" />
             <input type="text" name="molecule_SMILES" placeholder="SMILES format" required="required" />
