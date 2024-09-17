@@ -3,7 +3,7 @@
 
       <head>
         <meta charset="utf-8">
-        <title>CLR_ESP</title>
+        <title>FusionESP</title>
         <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family==Rancho&effect=shadow-multiple' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet' type='text/css'>
@@ -21,8 +21,8 @@
 
 <body>
     <div class="content">
-        <h1>CLR_ESP: Improved enzyme-substrate pair prediction using contrastive learning</h1>
-        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes for the model development are available at https://github.com/dzjxzyd/CLR_ESP</p>
+        <h1>FusionESP: Improved enzyme-substrate pair prediction by fusing protein and chemical knowledge</h1>
+        <p style="font-size:70%">The webserver is the implementation of the paper "" The original codes for the model development are available at https://github.com/dzjxzyd/FusionESP</p>
 	<p style="font-size:80%">Notice: a confidence score will be given for you, which reflect how confidence the model think its output. The model deployed in this web server is the  CLR_ESP-XL with ESM-2-1280 and MolFormer trained on both phylogenetic evidence-based and experimental evidence-based datasets (ACC = 94.56%	AUC = 0.9635	MCC = 0.8572)</p>
         <form action="{{url_for('predict')}}" method="post">
             <input type="text" name="Enzyme_sequence" placeholder="enzyme seuqence" required="required" />
@@ -46,7 +46,7 @@
         <p style="font-size:70%">Notice: it also support multiple sequence at the same time. Just input as “VPP,IPP,CCL,AGR” (sequences are separated by comma, no space)</p>
         <p style="font-size:80%"> Example for “Large-scale output version:” : </p>
         <p style="font-size:70%">1. Prepare your xls, xlsx, txt or fasta files  →  →  → 2. Upload the file through “Choose File” botton  →   →  → 3. Click “Run” →   →  → 4. It will automatically download your results. </p>
-        <p style="font-size:70%">Notice: File preparation should follow the examples under this repository https://github.com/dzjxzyd/CLR_ESP_server_1280/tree/main/input </p>
+        <p style="font-size:70%">Notice: File preparation should follow the examples under this repository https://github.com/dzjxzyd/FusionESP_server_1280/tree/main/input </p>
 
         <img src="static/css/Whole architecture.jpg" alt="Whole architecture" width="640" height="380" style="float:left">
     </div>
