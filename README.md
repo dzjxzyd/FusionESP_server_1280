@@ -1,4 +1,21 @@
 
+#### Run the server locally
+```
+install python 3.8 (3.9 or 3.10 is also ok)
+# download the repository and unzip the file
+# install all the required packages (my running environment is MacOS Intel chip).
+$ pip install requirements.txt
+# go to the working directory
+$ cd FusionESP_server_1280
+# run the server
+$ python app.py
+
+open the browser and go to this address    http://127.0.0.1:5000/
+
+# the webserver is ready for usage
+
+
+```
 
 Just a note for future users who are interested in build a webserver with Flask and Gunicorn, but meet error like:
 In my case it is AttributeError: Can't get attribute 'Contrastive_learning_layer' on <module '__main__' from
