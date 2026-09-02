@@ -13,8 +13,8 @@ from transformers import AutoModel, AutoTokenizer
 from rdkit import Chem
 
 app = Flask(__name__)
-model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True)
-tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True)
+model_smiles = AutoModel.from_pretrained("ibm/MoLFormer-XL-both-10pct", deterministic_eval=True, trust_remote_code=True,revision="7b12d94")
+tokenizer = AutoTokenizer.from_pretrained("ibm/MoLFormer-XL-both-10pct", trust_remote_code=True,revision="7b12d94")
 
 def MolFormer_embedding(model_smiles, tokenizer, SMILES_list):
     inputs = tokenizer(SMILES_list, padding=True, return_tensors="pt")
